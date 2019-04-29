@@ -14,7 +14,7 @@ import random as rn
 
 
 
-im = Image.open("foto.jpg")
+im = Image.open("prueba.png")
 col =  im.size[0] - im.size[0]%4
 
 row=im.size[1]-im.size[1]%4
@@ -31,47 +31,64 @@ for i in range(row):
       
         data[i,j] = r
         
-        
-        
-aux=np.zeros((row,col)).reshape(16,row//4,col//4)
-
+if row<=col:       
+    tam=row//4
+    t=row
+else:
+    tam=col//4
+    t=col       
+aux=np.zeros((t,t)).reshape(16,tam,tam)
 
 for i in range (16):
     if i <4:
-     aux[i]=data[i*row//4:i*row//4+row//4,0:col//4]
+        aux[i]=data[0:tam,i*tam:i*tam+tam]
     elif i < 8:
-       aux[i]=data[i%4*row//4:i%4*row//4+row//4,0:col//4] 
+       aux[i]=data[tam:2*tam,i%4*tam:i%4*tam+tam] 
       
     elif i < 12:
-        aux[i]=data[i%8*row//4:i%8*row//4+row//4,0:col//4] 
+        aux[i]=data[2*tam:3*tam,i%4*tam:i%4*tam+tam] 
     else:
-        aux[i]=data[i%12*row//4:i%12*row//4+row//4,0:col//4] 
+        aux[i]=data[3*tam:,i%4*tam:i%4*tam+tam] 
 
-aux1=np.zeros((row//4,col//4))
+aux1=np.zeros((tam,tam))
+
 lista=[]
+
 for i in range(16):
+    
     num=rn.randint(-1,15)
+    while num==i:
+         num=rn.randint(-1,15)
+    
     if  not(i in lista) and not(num in lista) :
-        aux1[:]=aux[i:i+1,:,:]
+        aux1[:]=aux[i]
         aux[i]=aux[num]
-        aux[num:num+1,:,:]=aux1[:]
+        aux[num]=aux1[:,:]
         lista.append(num)
         lista.append(i)
     if not(i in lista ):
         while num in lista:
             num=rn.randint(-1,15)
-        aux1[:]=aux[i:i+1,:,:]
+        aux1[:]=aux[i]
         aux[i]=aux[num]
-        aux[num:num+1,:,:]=aux1[:]
+        aux[num]=aux1[:,:]
         lista.append(num)
-        lista.append(i)    
+        lista.append(i)
             
 
 
-for i in range (4):
-    array1=np.hstack((array1,aux[i]))
 
-        
+
+array1=np.hstack((aux[0],aux[1],aux[2],aux[3]))
+array2=np.hstack((aux[4],aux[5],aux[6],aux[7]))
+array3=np.hstack((aux[8],aux[9],aux[10],aux[11]))
+array4=np.hstack((aux[12],aux[13],aux[14],aux[15]))
+
+ 
+final=np.vstack((array1,array2,array3,array4))    
+
+im=Image.fromarray(final)
+im.show()   
     
         
         
